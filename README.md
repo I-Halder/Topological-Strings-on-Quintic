@@ -7,7 +7,7 @@ The files in the folder P can be used as follows:
   3. Copy the Mathematica file named "example.nb" available here in folder P and follow the instructions in it.
 
 ## File gv.csv
-This file contains GV coefficients for quintic. Each column represents data for a given genus (0 to 51), and each row corresponds to a particular degree (1 to 21).
+This file contains Gopakumar-Vafa coefficients for quintic. Each column represents data for a given genus (0 to 51), and each row corresponds to a particular degree (1 to 21).
 
 ## File quintic.m
 This is the actual Mathematica file we used for the calculation. An initial version of it was written by IH, and the current optimized form is due to YL.
