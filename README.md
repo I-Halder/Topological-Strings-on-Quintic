@@ -6,7 +6,7 @@ This folder contains information on the free energy of topological strings on qu
   2. Use the following command to obtain a Mathematica readable file named P.mx: **cat * > P.mx**
 
 ## File ABGt.mx
-This file contains information on the moduli space geometry and YY variables.
+This file contains information on the moduli space geometry and Yamaguchi-Yau  variables.
 
 ## File example.nb
 Put the files example.nb, P.mx, ABGt.mx in the same folder. Now open example.nb in Mathematica and follow the instructions.
