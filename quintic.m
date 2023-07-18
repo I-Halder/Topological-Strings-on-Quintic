@@ -35,10 +35,23 @@ param[flag_] := Module[
 
 
 (* ::Subsection:: *)
+(*Input*)
+
+
+(*** Uncomment to specify max genus and optionally max degree ***)
+(*** Comment out to use command line ***)
+options={"-g","7"(*,"-d","6"*)};
+
+(*** Customize directory for file storage **)
+(* Program automatically creates folders if non-existent *)
+directory=NotebookDirectory[];
+directory=$HomeDirectory<>"/gv/";
+dataDirectory=directory<>"data/";
+
+
+(* ::Subsection::Closed:: *)
 (*Initialization*)
 
-
-(*options={"-g","11"(*,"-d","4"*)};*)
 
 genus=param["g"]//ToExpression;
 degree=param["d"]//ToExpression;
@@ -46,11 +59,6 @@ If[degree===Null,degree=dMin[genus]+1];
 Print["g="<>ToString[genus]<>", d="<>ToString[degree]];
 
 id=ToString[genus]<>"_"<>ToString[degree];
-
-(*directory=NotebookDirectory[];
-dataDirectory=NotebookDirectory[]<>"data/";*)
-directory=$HomeDirectory<>"/gv/";
-dataDirectory=Environment["SCRATCH"]<>"/yin_lab/Users/yhlin/gv/";
 
 resDirectory=directory<>"res/";
 timeDirectory=directory<>"time/";
@@ -183,70 +191,6 @@ F[g_,q_]:=Sum[Sum[2^(2(r-g))/Gamma[2g-2+1] n[r,d]SeriesCoefficient[D[Sin[x]^(2r-
 (*GV genus 0*)
 
 
-(*
-
-(* Calculation of GV invariants for genus 0 *)
-Clear[Ph,a,b,x,A,B,f,n,u,g,z];
-
-(* Calculation of three point function in terms of pre-potential *)
-Ph[0,0,u_]:=f[Exp[u]];
-(a^(0,1))[n_,u_]:=a[n+1,u]-a[1,u]a[n,u];
-(b^(0,1))[n_,u_]:=b[n+1,u]-b[1,u]b[n,u];
-x'[u_]:=x[u](x[u]-1);
-Ph[g_,n_,u_]:=D[Ph[g,n-1,u],u]-((n-1)(a[1,u]+1)+(2-2g)(b[1,u]-1/2 x[u]))Ph[g,n-1,u];
-
-ThreePointFunctiond=Ph[0,3,u]/.u->Log[z]//Expand;
-a[n_,u_]:=A[n, Exp[u]];
-b[n_,u_]:=B[n, Exp[u]];
-X[z_] := 1/(1-z);
-x[u_]:=X[Exp[u]];
-ThreePointFunctionP=ThreePointFunctiond;
-
-Clear[etinf,EtInf];
-etinf=Exp[2\[Pi] I tInf[z]];
-EtInf[d_,z_]:=EtInf[d,z]=If[d>0,EtInf[d-1,z]*etinf,1];
-fInf[z_]:=Module[{tinf,\[Omega]inf},
-	tinf=tInf[z];
-	\[Omega]inf=\[Omega]Inf[0,z];
-	(5/6 (2\[Pi] I tinf)^3-0*a/2 (2\[Pi] I tinf)^2+0*c (2\[Pi] I tinf)+0*e/2+Sum[n[0,d] PolyLog[3,EtInf[d,z]],{d,1,degree}])\[Omega]inf^2 ((1-z)/(5z))
-];
-
-(*(* pre-potential in terms of GV invariants *)
-fInf[z_]:=Module[{tinf,\[Omega]inf},
-	tinf=tInf[z];
-	\[Omega]inf=\[Omega]Inf[0,z];
-	(5/6 (2\[Pi] I tinf)^3-0*a/2 (2\[Pi] I tinf)^2+0*c (2\[Pi] I tinf)+0*e/2+Sum[n[0,d]PolyLog[3,Exp[2\[Pi] I d tinf]],{d,1,degree}])\[Omega]inf^2 ((1-z)/(5z))
-];*)
-
-(*Clear[ff];*)
-
-(*Timing[ff[0]=fInf[z]//Simplify][[1]]//Print;*)
-
-ff[0]:=fInf[z]//Simplify;
-
-ff[n_]:=(ff[n]=D[ff[n-1],z])/;n>0;
-
-Timing[ff[3]][[1]]//Print;
-
-zInfq=Series[zInf,{q,0,(degree+1)}];
-comps={ThreePointFunctionP/.{f[z]->0,f'[z]->0,f''[z]->0,f'''[z]->0},Coefficient[ThreePointFunctionP,f[z]],Coefficient[ThreePointFunctionP,f'[z]],Coefficient[ThreePointFunctionP,f''[z]],Coefficient[ThreePointFunctionP,f'''[z]]};
-A:=AInf;
-B:=BInf;
-
-comps=Normal[comps];
-fs=Normal[Join[{1},Table[ff[i]/.Log[z]->0,{i,0,3}]]];
-ThreePointFunction=comps . fs//Expand;
-sol=LS[Table[SeriesCoefficient[ThreePointFunction,{z,Infinity,i}],{i,1,degree}]]//FullSimplify;
-GV=sol;
-Clear[Ph,a,b,x,A,B,f,n,u,g,z];
-
-*)
-
-
-(* ::Subsection::Closed:: *)
-(*GV genus 0*)
-
-
 X[z_] := 1/(1-z);
 zInfq=Series[zInf,{q,0,(degree+1)}];
 GV={};
@@ -328,7 +272,6 @@ Ph[g_,n_,z_]:=(Ph[g,n,z]=Module[{t1,t2,ans1,ans2},
 	tt["Ph"<>ToString[n],g]=t1+t2;
 	ans1+ans2
 	])/;n>0;
-(*Ph[g_,n_,z_]:=(Ph[g,n,z]=Dz[Ph[g,n-1,z]]-((-1+n) (-2 u[z]+v1[z])+(2-2 g) (u[z]-x[z]/2))Ph[g,n-1,z]//Simp)/;n>0;*)
 
 Q[g_,z_]:=Module[{t,ans,vec},
 	Ph[g-1,2,z];
@@ -337,7 +280,6 @@ Q[g_,z_]:=Module[{t,ans,vec},
 	tt["Q",g]=t;
 	ans
 	]/;g>1;
-(*Q[g_,z_]:=(1/2)(Ph[g-1,2,z]+Sum[Ph[g-r,1,z]Ph[r,1,z],{r,1,g-1}]//Simp)/;g>1;*)
 
 rule={X[z]->x,A[1,z]->v1-2u-1,B[1,z]->u,B[2,z]->v2+u v1,B[3,z]->v3+u(-v2+x(v1-2/5))};
 ruleInv={x->X[z],v1->1+A[1,z]+2 B[1,z],v2->-B[1,z]-A[1,z] B[1,z]-2 B[1,z]^2+B[2,z],v3->1/5 (-5 B[1,z]^2-5 A[1,z] B[1,z]^2-10 B[1,z]^3+5 B[1,z] B[2,z]+5 B[3,z]-3 B[1,z] X[z]-5 A[1,z] B[1,z] X[z]-10 B[1,z]^2 X[z]),u->B[1,z]};
@@ -345,9 +287,6 @@ ruleInv={x->X[z],v1->1+A[1,z]+2 B[1,z],v2->-B[1,z]-A[1,z] B[1,z]-2 B[1,z]^2+B[2,
 Qu[g_,z_]:=Qu[g,z]=CoefficientList[Q[g,z],u[z]];
 Qh[g_,n_,z_]:=Qu[g,z][[n+1]];
 
-(*P1[g_,0,z_]:=Integrate[Collect[-Qh[g,0,z]/.{v2[z]\[Rule]0,v3[z]\[Rule]0},v1[z]],{v1[z],0,v1[z]}];
-P2[g_,0,z_]:=P1[g,0,z]+Integrate[Collect[Qh[g,1,z]-x[z] Qh[g,2,z]/.{v3[z]\[Rule]0},v2[z]],{v2[z],0,v2[z]}];
-P3[g_,0,z_]:=P2[g,0,z]+Integrate[Collect[Qh[g,2,z],v3[z]],{v3[z],0,v3[z]}];*)
 Int[expr_,var_]:=Module[{coefs},
 	coefs=CoefficientList[expr,var];
 	coefs . Table[var^i/i,{i,1,Length[coefs]}]
@@ -429,7 +368,7 @@ dMin[g_]:=Ceiling[5/2 (-1+Sqrt[-3+8 g]/Sqrt[5])-1];
 Castelnuovo[g_]:=Table[n[g,d],{d,1,dMin[g]}];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Recursion*)
 
 
@@ -498,7 +437,7 @@ Do[
 	
 	file=resDirectory<>id<>".mx";
 	If[FileExistsQ[file],DeleteFile[file<>".bk"];RenameFile[file,file<>".bk"]];
-	DumpSave[file,{c,p,n,GV,gv,t,tt}];
+	DumpSave[file,{A0,B0,G0,t0,AInf,BInf,GInf,tInf,Ac,Bc,Gc,p,n}];
 	
 	file=timeDirectory<>id<>".csv";
 	WriteString[file,",\n"];
