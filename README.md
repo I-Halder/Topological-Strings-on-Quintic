@@ -1,4 +1,4 @@
-# Topological-Strings-on-Quintic
+# **Topological-Strings-on-Quintic**
 
 ## Folder P
 This folder contains information on the free energy of topological strings on quintic up to genus 49. To use it, follow the steps below
